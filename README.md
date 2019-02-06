@@ -4,6 +4,9 @@ Keras Model Creator
 Visually design [Keras models for R
 language](https://keras.rstudio.com/).
 
+The idea of Keras Model Creator is based on [Deep Learning
+Studio](https://deepcognition.ai/features/deep-learning-studio/).
+
 Take a look at the [guided
 tour\!](https://jcrodriguez.shinyapps.io/KerasModelCreator/?help)
 
@@ -54,3 +57,7 @@ shinyapps.io
 
 And take the [guided
 tour](https://jcrodriguez.shinyapps.io/KerasModelCreator/?help).
+
+## Limitations
+
+  - Few network layers already developed.
