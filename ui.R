@@ -1,5 +1,6 @@
 library("shiny");
 
+source("Data/ui_data.R");
 source("Model/ui_model.R");
 source("Compile/ui_compile.R");
 source("Help/ui_help.R");
@@ -8,12 +9,13 @@ shinyUI(fluidPage(
     theme=shinytheme("simplex"),
     
     # help steps code
-    includeCSS("introjs.min.css"), # Include IntroJS styling
-    includeScript("intro.min.js"), # Include IntroJS library
+    includeCSS("www_utils/introjs.min.css"), # Include IntroJS styling
+    includeScript("www_utils/intro.min.js"), # Include IntroJS library
     # Include JavaScript code to make shiny communicate with introJS
-    includeScript("app.js"),
+    includeScript("www_utils/app.js"),
     
     navbarPage("Keras Model Creator", id="nav",
+        tabPanel(title="Data", ui_data(), value=5),
         tabPanel(title="Model", ui_model(), value=1),
         tabPanel(title="Compile", ui_compile(), value=2),
         # Code is a blank panel so the generated code appears up

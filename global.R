@@ -1,4 +1,6 @@
 require("jsonlite");
+require("readr");
+require("readxl");
 require("shinythemes");
 require("visNetwork");
 

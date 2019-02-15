@@ -1,10 +1,42 @@
 library("shiny");
 
+source("Data/server_data.R");
 source("Model/server_model.R");
 source("CodeGenerator/server_code_generator.R");
 source("Help/server_help.R");
 
+debug <- FALSE;
 shinyServer(function(input, output, session) {
+  
+  ################### Data
+  # update numeric inputs when one of them change
+  observeEvent(input$train_perc, update_percs(input, session, "train"));
+  observeEvent(input$validation_perc, update_percs(input, session, "val"));
+  observeEvent(input$test_perc, update_percs(input, session, "test"));
+  # update the text that shows the number of samples per group
+  output$data_numbs <- renderText(update_data_numbs(input, input_data()));
+  
+  # update input_data when file uploaded
+  
+  if (!debug) {
+    input_data <- reactive(read_input_file(input));
+  } else {
+    input_data <- reactiveVal(read_excel("~/mytmp/iris.xlsx"));
+  }
+  
+  # show input_data
+  output$input_table <- renderDataTable(input_data());
+  
+  # fill columns select input
+  observeEvent(input_data(), update_columns_inputs(input_data(), session));
+  
+  # update columns category selection when one or other is modified
+  observeEvent(input$numeric_cols, update_cat_cols(input, session, "num"));
+  observeEvent(input$categ_cols, update_cat_cols(input, session, "cat"));
+  
+  # update columns outp/input select when one or other is modified
+  observeEvent(input$input_cols, update_inp_cols(input, session, "input"));
+  observeEvent(input$output_col, update_inp_cols(input, session, "output"));
   
   ################### Model
   start_net <- init_network();
