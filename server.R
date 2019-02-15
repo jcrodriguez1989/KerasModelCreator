@@ -5,7 +5,6 @@ source("Model/server_model.R");
 source("CodeGenerator/server_code_generator.R");
 source("Help/server_help.R");
 
-debug <- FALSE;
 shinyServer(function(input, output, session) {
   
   ################### Data
@@ -18,7 +17,7 @@ shinyServer(function(input, output, session) {
   
   # update input_data when file uploaded
   
-  if (!debug) {
+  if (!"in_debug" %in% ls()) {
     input_data <- reactive(read_input_file(input));
   } else {
     input_data <- reactiveVal(read_excel("~/mytmp/iris.xlsx"));
@@ -110,7 +109,7 @@ shinyServer(function(input, output, session) {
   ################### Code Generator
   # re-generate code whenever code or compile options change
   output$generated_code <- renderText(
-    generate_code(present_net(), compile_opts())
+    generate_code(length(input$input_cols), present_net(), compile_opts())
   );
   
   ################### Help

@@ -1,7 +1,7 @@
 # generates the full code
-generate_code <- function(net, compile_opts) {
+generate_code <- function(data_shape, net, compile_opts) {
   libs_code <- 'library("keras")';
-  model_code <- generate_model_code(net);
+  model_code <- generate_model_code(data_shape, net);
   compile_code <- generate_compile_code(compile_opts);
   
   final_code <- paste(libs_code, model_code, compile_code, sep="\n\n");
@@ -10,9 +10,11 @@ generate_code <- function(net, compile_opts) {
 }
 
 # generates the model code
-generate_model_code <- function(net) {
+generate_model_code <- function(data_shape, net) {
   nodes <- net$nodes;
   edges <-net$edges; 
+  
+  data_shape <- ifelse(data_shape == 0, "SHAPE", data_shape);
   
   # for each layer create its code
   codes <- lapply(seq_len(nrow(nodes)), function(i)
@@ -38,7 +40,8 @@ generate_model_code <- function(net) {
       param_name <- ifelse(nodes[nodes$id == res[[2]], "label"] == "Embedding",
                            "input_dim", "input_shape");
       act_codes[[2]] <- sub("(, ", "(", # if the layer didnt have any param
-                            sub(")$", paste0(", ", param_name, "=SHAPE)"),
+                            sub(")$",
+                                paste0(", ", param_name, "=", data_shape, ")"),
                                             act_codes[[2]]), fixed=TRUE);
     }
     act_code <- paste(act_codes[res], collapse=" %>%\n  ");
