@@ -1,18 +1,19 @@
 # generates the full code
-generate_code <- function(data_shape, net, compile_opts) {
+generate_code <- function(data_shape, net, compile_opts, fit_opts) {
   libs_code <- 'library("keras")';
   model_code <- generate_model_code(data_shape, net);
   compile_code <- generate_compile_code(compile_opts);
+  fit_code <- generate_fit_code(fit_opts);
   
-  final_code <- paste(libs_code, model_code, compile_code, sep="\n\n");
-  
+  final_code <- paste(libs_code, model_code, compile_code, fit_code,
+                      sep="\n\n");
   return(final_code);
 }
 
 # generates the model code
 generate_model_code <- function(data_shape, net) {
   nodes <- net$nodes;
-  edges <-net$edges; 
+  edges <-net$edges;
   
   data_shape <- ifelse(data_shape == 0, "SHAPE", data_shape);
   
@@ -97,4 +98,16 @@ generate_compile_code <- function(compile_opts) {
     "\n)")
   
   return(res);
+}
+
+# generates the fit code
+generate_fit_code <- function(fit_opts) {
+  res <- paste(
+    "history <- model %>% fit(\n ",
+    "x_train, y_train,\n ",
+    "validation_data=list(x_val, y_val),\n ",
+    paste(names(fit_opts),
+          fit_opts, sep="=", collapse=",\n  "),
+    "\n)")
+  return(res)
 }

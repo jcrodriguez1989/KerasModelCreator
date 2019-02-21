@@ -2,6 +2,7 @@ library("shiny");
 
 source("Data/server_data.R");
 source("Model/server_model.R");
+source("Fit/server_fit.R");
 source("CodeGenerator/server_code_generator.R");
 source("Help/server_help.R");
 
@@ -16,12 +17,8 @@ shinyServer(function(input, output, session) {
   output$data_numbs <- renderText(update_data_numbs(input, input_data()));
   
   # update input_data when file uploaded
-  
-  if (!"in_debug" %in% ls()) {
-    input_data <- reactive(read_input_file(input));
-  } else {
-    input_data <- reactiveVal(read_excel("~/mytmp/iris.xlsx"));
-  }
+  input_data <- reactiveVal(NULL);
+  observeEvent(input$data_input_file, input_data(read_input_file(input)));
   
   # show input_data
   output$input_table <- renderDataTable(input_data());
@@ -74,14 +71,10 @@ shinyServer(function(input, output, session) {
   })
   
   # add node event
-  observeEvent(input$add_node_btn, {
-    present_net(add_node(input, present_net()));
-  });
+  observeEvent(input$add_node_btn, present_net(add_node(input, present_net())));
   
   # delete node event (and the associated edges)
-  observeEvent(input$del_node_btn, {
-    present_net(del_node(input, present_net()));
-  });
+  observeEvent(input$del_node_btn, present_net(del_node(input, present_net())));
   
   # add edge event
   observeEvent(input$add_edge_btn, {
@@ -106,11 +99,57 @@ shinyServer(function(input, output, session) {
     metrics=input$metrics_sel
   ));
   
+  ################### Fit
+  # the fit inputs will be a reactive list
+  fit_opts <- reactive(list(
+    epochs=input$n_epochs,
+    batch_size=input$batch_sz
+  ))
+  
+  # list to store x_train, y_train, x_test, etc.
+  fit_data <- reactiveVal(list());
+  # when hit on fit, first step is to prepare fit_data
+  epochs_ran <- reactiveVal(0);
+  observeEvent(input$fit, {
+    model_history(list());
+    fit_data(prepare_fit_data(input_data(), input));
+    # strange thing to have the plot being updated
+    epochs_ran(0);
+    observe({
+      isolate({
+        epochs_ran(epochs_ran()+1);
+        model_history(fit_model(
+          fit_data(), model_history(), isolate(gen_code())));
+      })
+      if (isolate(epochs_ran() < input$n_epochs) && # if didnt finish
+          isolate(length(model_history())) > 0) { # and there was not error
+        invalidateLater(0, session);
+      }
+    });
+  });
+  
+  # list to store the current model, and the fit history
+  model_history <- reactiveVal(list());
+  output$fit_plot <- renderPlot({
+    if (is.null(model_history()$history)) {
+      return(print(ggplot()));
+    } else {
+      plot(model_history()$history) + 
+        coord_cartesian(xlim=c(1, isolate(input$n_epochs)), ylim=c(0, 1));
+    }
+  });
+  
   ################### Code Generator
   # re-generate code whenever code or compile options change
-  output$generated_code <- renderText(
-    generate_code(length(input$input_cols), present_net(), compile_opts())
+  gen_code <- reactive(
+    generate_code(
+      length(input$input_cols),
+      present_net(),
+      compile_opts(),
+      fit_opts()
+    )
   );
+  output$generated_code <- renderText(gen_code());
   
   ################### Help
   # if help mode activated then model and compile helps will be constantly
@@ -154,4 +193,19 @@ shinyServer(function(input, output, session) {
   observeEvent(input$startHelp, {
     session$sendCustomMessage(type="startHelp", message=list(""));
   })
+  
+  # on click load data and network, and put them as current
+  observeEvent(input$load_sample_data, {
+    samp_data <- load_sample_data(input, session);
+    input_data(samp_data$input_data);
+    present_net(samp_data$present_net);
+  })
+  
+  ################### Utils
+  
+  if (exists("in_debug")) {
+    input_data(read_excel("~/mytmp/iris.xlsx"));
+    present_net <- reactiveVal(get(load(file="~/mytmp/net.RData")));
+  }
+  
 })

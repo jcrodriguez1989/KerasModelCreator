@@ -3,7 +3,7 @@ source("Help/ui_help.R");
 
 ui_model <- function() {
   fluidRow(
-    column(2,
+    column(3,
       wellPanel(
         h4("Nodes"),
         fluidRow(div(id="layer_sel",
@@ -36,7 +36,7 @@ ui_model <- function() {
         ))
       )
     ),
-    column(10, fluidRow(
+    column(9, fluidRow(
       div(id="design_panel", wellPanel(visNetworkOutput("model_network"))),
       conditionalPanel("input.help_mode", ui_help_model())
     ))

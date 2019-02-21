@@ -219,9 +219,78 @@ get_metrics_help <- function(metrics_opts) {
       "squared_hinge"=paste(
         "mean(max(c(1 - y_true * y_pred, 0)) ^ 2)"),
       "top_k_categorical_accuracy"=paste(
-        "mean(in_top_k(y_pred, argmax(y_true), k))"),
+        "mean(in_top_k(y_pred, argmax(y_true), k))")
     )
   })
   selected_opt_help <- paste0(metrics_opts, ":\n", selected_opt_help);
   paste(res, paste(selected_opt_help, collapse="\n\n"), sep="\n\n");
+}
+
+# load the selected sample data (just iris for now)
+load_sample_data <- function(input, session) {
+  switch(
+    input$sample_data,
+    "Iris"=load_iris_data(input, session)
+  )
+}
+
+# load iris sample data (matrix and model). Also update input fields as loss
+load_iris_data <- function(input, session) {
+  input_data <- as_tibble(iris[,c(5,1:4)]);
+  
+  # create the model network
+  present_net <- list();
+  present_net$nodes <- data.frame(
+    id=paste0("node_", 0:4),
+    label=c("\nInput", rep("Dense", 4)),
+    color.background="lightblue",
+    color.border="black",
+    title=c(
+      "",
+      'units=30<br/>activation="relu"<br/>kernel_regularizer=NULL',
+      'units=10<br/>activation="relu"<br/>kernel_regularizer=NULL',
+      'units=5<br/>activation="relu"<br/>kernel_regularizer=NULL',
+      'units=3<br/>activation="softmax"<br/>kernel_regularizer=NULL'
+      ),
+    shadow=TRUE,
+    shape=c("database", rep("box", 4))
+  )
+  present_net$nodes$params <- list(
+    params=NULL,
+    params=list(),
+    params=list(),
+    params=list(),
+    params=list()
+  )
+  present_net$nodes$params[[2]]$units <- 30;
+  present_net$nodes$params[[2]]$activation <- "\"relu\"";
+  present_net$nodes$params[[2]]$kernel_regularizer <- "NULL";
+  present_net$nodes$params[[3]]$units <- 10;
+  present_net$nodes$params[[3]]$activation <- "\"relu\"";
+  present_net$nodes$params[[3]]$kernel_regularizer <- "NULL";
+  present_net$nodes$params[[4]]$units <- 5;
+  present_net$nodes$params[[4]]$activation <- "\"relu\"";
+  present_net$nodes$params[[4]]$kernel_regularizer <- "NULL";
+  present_net$nodes$params[[5]]$units <- 3;
+  present_net$nodes$params[[5]]$activation <- "\"softmax\"";
+  present_net$nodes$params[[5]]$kernel_regularizer <- "NULL";
+  
+  present_net$edges <- data.frame(
+    id=paste0("edge_", 1:4),
+    from=paste0("node_", 0:3),
+    to=paste0("node_", 1:4),
+    arrows="to"
+  );
+  
+  updateSelectInput(session, "optimizer_sel", selected="adam");
+  updateSelectInput(session, "loss_sel", 
+                    selected="categorical_crossentropy");
+  updateSelectInput(session, "metrics_sel", selected="categorical_accuracy");
+  
+  updateNumericInput(session, "n_epochs", value=30);
+  updateNumericInput(session, "batch_sz", value=5);
+  
+  updateTabsetPanel(session, "nav", "5"); # go to data tab page
+  
+  return(list(input_data=input_data, present_net=present_net));
 }

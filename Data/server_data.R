@@ -1,5 +1,12 @@
 # if one field increments in one, then decrease it from another field
 update_percs <- function(input, session, which) {
+  if (is.na(input$train_perc) || is.na(input$validation_perc) || 
+      is.na(input$test_perc)) {
+    showNotification(paste0("Incorrect train, validation or test percentages!",
+                            "\n Check in Data tab"), type="error");
+    return();
+  }
+  
   changes <- c("validation_perc", "test_perc", "train_perc");
   names(changes) <- c("train", "val", "test");
   which <-which(which == names(changes));
@@ -14,6 +21,8 @@ update_percs <- function(input, session, which) {
   # bug? for some reason if long pressed any input, then it gets crazy
 }
 
+# depending on rows of the input matrix, and percentages for train, validation,
+# and test, it calculates the number of each group
 update_data_numbs <- function(input, input_data) {
   if (is.null(input_data))
     return("")
@@ -55,6 +64,7 @@ read_input_file <- function(input) {
   return(res);
 }
 
+# fill choices columns depending in tibble predictions
 update_columns_inputs <- function(input_data, session) {
   col_classes <- sapply(input_data, class);
   updateSelectInput(session, "numeric_cols", choices=names(col_classes), 
@@ -68,6 +78,7 @@ update_columns_inputs <- function(input_data, session) {
                     selected=names(col_classes)[[1]]);
 }
 
+# switch choices between numeric or categorical (cant be both)
 update_cat_cols <- function(input, session, which) {
   changes <- c("numeric_cols", "categ_cols");
   names(changes) <- c("num", "cat");
@@ -78,6 +89,7 @@ update_cat_cols <- function(input, session, which) {
                       input[[changes[[which]]]]));
 }
 
+# switch choices between input or output (cant be both)
 update_inp_cols <- function(input, session, which) {
   changes <- c("input_cols", "output_col");
   names(changes) <- c("input", "output");
