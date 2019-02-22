@@ -1,4 +1,4 @@
-# try to load a package, if its not installed then it installs it with the 
+# try to load a package, if its not installed then it installs it with the
 # provided inst_fun, and finally it loads the package
 load_install <- function(pkg, inst_fun=install.packages) {
   if (!require(pkg, character.only=TRUE)) {
