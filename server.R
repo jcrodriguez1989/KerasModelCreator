@@ -1,10 +1,11 @@
 library("shiny");
 
-source("Data/server_data.R");
-source("Model/server_model.R");
-source("Fit/server_fit.R");
-source("CodeGenerator/server_code_generator.R");
-source("Help/server_help.R");
+source("Data/server_data.R", local=TRUE);
+source("Model/server_model.R", local=TRUE);
+source("Fit/server_fit.R", local=TRUE);
+source("CodeGenerator/server_code_generator.R", local=TRUE);
+source("Help/server_help.R", local=TRUE);
+source("help_steps.R", local=TRUE);
 
 shinyServer(function(input, output, session) {
   
@@ -168,6 +169,7 @@ shinyServer(function(input, output, session) {
   })
   
   # events to go switching between help steps and tabs
+  help_steps <- help_steps();
   set_help_content <- function(act_tab) {
     # Index help data into right tab
     tab_idx <- help_steps$tab == act_tab;
@@ -203,9 +205,9 @@ shinyServer(function(input, output, session) {
   
   ################### Utils
   
-  if (exists("in_debug")) {
-    input_data(read_excel("~/mytmp/iris.xlsx"));
-    present_net <- reactiveVal(get(load(file="~/mytmp/net.RData")));
-  }
+  # if (exists("in_debug")) {
+  #   input_data(read_excel("~/mytmp/iris.xlsx"));
+  #   present_net <- reactiveVal(get(load(file="~/mytmp/net.RData")));
+  # }
   
 })

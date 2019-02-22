@@ -1,24 +1,30 @@
-Keras Model Creator
+Keras Model Creator (Alpha Version)
 ================
 
-Visually design [Keras models for R
-language](https://keras.rstudio.com/).
+Visually design [Keras models for R language](https://keras.rstudio.com/).
 
-The idea of Keras Model Creator is based on [Deep Learning
-Studio](https://deepcognition.ai/features/deep-learning-studio/).
+The idea of Keras Model Creator is based on [Deep Learning Studio](https://deepcognition.ai/features/deep-learning-studio/).
 
-Take a look at the [guided
-tour\!](https://jcrodriguez.shinyapps.io/KerasModelCreator/?help)
+Take a look at the [guided tour!](https://jcrodriguez.shinyapps.io/KerasModelCreator/?help)
 
-## Features
+Features
+--------
 
-  - Add layers and connections manually.
+-   Load input matrix.
+    -   Select percentage of data to use as train and validation.
+    -   Select input and output columns.
+-   Add layers and connections manually.
 
-  - Set compile options.
+-   Set compile options.
 
-  - Get automatically generated code.
+-   Get automatically generated code.
 
-## Installation
+-   Fit your model! And visualize epoch by epoch its metrics.
+
+-   Choose the sample dataset and model to try Keras Model Creator.
+
+Installation
+------------
 
 Clone KerasModelCreator repository, i.e., from a bash console:
 
@@ -38,7 +44,8 @@ install.packages(c(
 ));
 ```
 
-## Usage
+Usage
+-----
 
 From an R console type:
 
@@ -51,13 +58,11 @@ library("shiny");
 runApp();
 ```
 
-Or visit the [example
-app](https://jcrodriguez.shinyapps.io/KerasModelCreator/) at
-shinyapps.io
+Or visit the [example app](https://jcrodriguez.shinyapps.io/KerasModelCreator/) at shinyapps.io
 
-And take the [guided
-tour](https://jcrodriguez.shinyapps.io/KerasModelCreator/?help).
+And take the [guided tour](https://jcrodriguez.shinyapps.io/KerasModelCreator/?help).
 
-## Limitations
+Limitations
+-----------
 
-  - Few network layers already developed.
+-   Few network layers already developed.

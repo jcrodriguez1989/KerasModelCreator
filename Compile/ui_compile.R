@@ -1,5 +1,5 @@
-source("Compile/global_compile.R");
-source("Help/ui_help.R");
+source("Compile/global_compile.R", local=TRUE);
+source("Help/ui_help.R", local=TRUE);
 
 ui_compile <- function() {
   fluidRow(

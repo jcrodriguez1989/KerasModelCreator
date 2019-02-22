@@ -1,5 +1,5 @@
-source("Model/global_model.R");
-source("Help/ui_help.R");
+source("Model/global_model.R", local=TRUE);
+source("Help/ui_help.R", local=TRUE);
 
 ui_model <- function() {
   fluidRow(

@@ -1,10 +1,10 @@
 library("shiny");
 
-source("Data/ui_data.R");
-source("Model/ui_model.R");
-source("Compile/ui_compile.R");
-source("Fit/ui_fit.R");
-source("Help/ui_help.R");
+source("Data/ui_data.R", local=TRUE);
+source("Model/ui_model.R", local=TRUE);
+source("Compile/ui_compile.R", local=TRUE);
+source("Fit/ui_fit.R", local=TRUE);
+source("Help/ui_help.R", local=TRUE);
 
 shinyUI(fluidPage(
   theme=shinytheme("simplex"),
