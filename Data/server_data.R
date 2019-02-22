@@ -37,14 +37,17 @@ update_data_numbs <- function(input, input_data) {
   )
 }
 
-read_input_file <- function(input) {
+read_input_file <- function(input, session) {
   res <- NULL;
   file_path <- input$data_input_file$datapath;
   sep <- isolate(input$data_input_sep);
   sep <- ifelse(sep == "", ",", sep); # comma is the default
   sep <- ifelse(sep == "\\t", "\t", sep); # doesnt work to do it with sub
-
+  progress <- Progress$new(session, max=2);
+  on.exit(progress$close());
+  
   # first try to read it as excel, if not read it as csv
+  progress$set(message="Trying to load as excel file.", value=1);
   tryCatch(
     res <- read_excel(file_path),
     error = function(e) {
@@ -52,6 +55,8 @@ read_input_file <- function(input) {
     }
   )
   
+  # if could not load as excel, try as csv
+  progress$set(message="Trying to load as csv or tsv file.", value=2);
   if (is.null(res)) {
     tryCatch(
       res <- read_delim(file_path, sep),
@@ -60,7 +65,6 @@ read_input_file <- function(input) {
       }
     )
   }
-  
   return(res);
 }
 

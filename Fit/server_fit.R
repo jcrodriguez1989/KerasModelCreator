@@ -1,5 +1,5 @@
 # depending on inputs, it will load train, validation, and test submatrices
-prepare_fit_data <- function(input_data, input) {
+prepare_fit_data <- function(input_data, input, session) {
   if (is.null(input_data)) {
     showNotification("No data matrix loaded!\n Check in Data tab",
                      type="error");
@@ -26,7 +26,10 @@ prepare_fit_data <- function(input_data, input) {
                      type="error");
     return(list());
   }
+  progress <- Progress$new(session, max=3);
+  on.exit(progress$close());
   
+  progress$set(message="Sampling rows for train and validation", value=1);
   # todo: implement input$balanced_input
   idxs <- seq_len(nrow(input_data));
   train_idxs <- sample(idxs,
@@ -38,6 +41,7 @@ prepare_fit_data <- function(input_data, input) {
   
   # todo: check that what they say is numeric
   # merge numerical matrix with (previously transformed) categorical matrix
+  progress$set(message="Converting categorical columns to numeric", value=2);
   inp_data <- input_data[, input$input_cols];
   inp_data <- cbind(
     as.matrix(inp_data[, intersect(input$numeric_cols, input$input_cols)]),
@@ -63,6 +67,7 @@ prepare_fit_data <- function(input_data, input) {
     }))
   )
   
+  progress$set(message="Data prepared to fit", value=3);
   return(list(
     x_train=inp_data[train_idxs,], y_train=outp_data[train_idxs,,drop=FALSE],
     x_val=inp_data[val_idxs,], y_val=outp_data[val_idxs,,drop=FALSE],

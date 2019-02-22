@@ -5,7 +5,7 @@ Visually design [Keras models for R language](https://keras.rstudio.com/).
 
 The idea of Keras Model Creator is based on [Deep Learning Studio](https://deepcognition.ai/features/deep-learning-studio/).
 
-Take a look at the [guided tour!](https://jcrodriguez.shinyapps.io/KerasModelCreator/?help)
+Take a look at the [guided tour!](https://jcrodriguez.shinyapps.io/KerasModelCreator_dev/?help)
 
 Features
 --------
@@ -21,33 +21,29 @@ Features
 
 -   Fit your model! And visualize epoch by epoch its metrics.
 
--   Choose the sample dataset and model to try Keras Model Creator.
+-   Choose sample dataset and model to try Keras Model Creator.
 
-Installation
-------------
+Installation / Usage
+--------------------
+
+### Using shiny::runGitHub function
+
+From an R console:
+
+``` r
+library("shiny");
+runGitHub("KerasModelCreator", "jcrodriguez1989", ref="dev");
+```
+
+### Cloning the GitHub repository
 
 Clone KerasModelCreator repository, i.e., from a bash console:
 
 ``` bash
-git clone https://github.com/jcrodriguez1989/KerasModelCreator.git;
+git clone -b dev https://github.com/jcrodriguez1989/KerasModelCreator.git;
 ```
 
-Install package dependencies, i.e., from R console:
-
-``` r
-install.packages(c(
-  "jsonlite",
-  "keras", # not a dependency, but come on!
-  "shiny",
-  "shinythemes",
-  "visNetwork"
-));
-```
-
-Usage
------
-
-From an R console type:
+And run it, from an R console type:
 
 ``` r
 # replace by the PATH where KerasModelCreator was cloned
@@ -58,9 +54,34 @@ library("shiny");
 runApp();
 ```
 
-Or visit the [example app](https://jcrodriguez.shinyapps.io/KerasModelCreator/) at shinyapps.io
+### Online ShinyApps example
 
-And take the [guided tour](https://jcrodriguez.shinyapps.io/KerasModelCreator/?help).
+Visit the [example app](https://jcrodriguez.shinyapps.io/KerasModelCreator_dev/) at shinyapps.io
+
+And take the [guided tour](https://jcrodriguez.shinyapps.io/KerasModelCreator_dev/?help).
+
+R dependencies
+--------------
+
+**Note:** Keras Model Creator will also depend on wether the `keras` library can get in a working state, i.e.,
+
+``` r
+library("keras");
+install_keras();
+```
+
+If not previously installed, these dependencies are going to be installed automatically
+
+Dependencies:
+
+-   `ggplot2`
+-   `jsonlite`
+-   `keras`
+-   `readr`
+-   `readxl`
+-   `shinythemes`
+-   `tibble`
+-   `visNetwork` <!-- ```{r eval=FALSE} --> <!-- install.packages(c( --> <!--   "jsonlite", --> <!--   "keras", # not a dependency, but come on! --> <!--   "shiny", --> <!--   "shinythemes", --> <!--   "visNetwork" --> <!-- )); --> <!-- ``` -->
 
 Limitations
 -----------

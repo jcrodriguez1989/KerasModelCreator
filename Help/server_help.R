@@ -228,6 +228,9 @@ get_metrics_help <- function(metrics_opts) {
 
 # load the selected sample data (just iris for now)
 load_sample_data <- function(input, session) {
+  progress <- Progress$new(session, max=1);
+  on.exit(progress$close());
+  progress$set(message="Loading sample data", value=1);
   switch(
     input$sample_data,
     "Iris"=load_iris_data(input, session)

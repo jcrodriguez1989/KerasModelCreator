@@ -1,3 +1,5 @@
+source("Model/global_model.R", local=TRUE);
+
 init_network <- function() {
   init_nodes <- data.frame(
     id="node_0",
@@ -91,6 +93,7 @@ add_edge <- function(edge, net) {
 can_add_ege <- function(edge, net) {
   nodes <- net$nodes;
   edges <- net$edges;
+  print(edge)
   
   # Embedding layer can only be the first layer
   if (nodes[nodes$id == edge[[2]], "label"] == "Embedding" &&
@@ -153,6 +156,7 @@ invert_edge <- function(input, edge_id, net) {
   new_net <- net;
   new_net$edges <- edges[-edge_idx,];
   edge <- edges[edge_idx, c("from", "to")];
+  edge <- c(as.character(edge[[1]]), as.character(edge[[2]]));
   
   if (can_add_ege(rev(edge), new_net)) {
     net <- del_edge(input, edge_id, net);

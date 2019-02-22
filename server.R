@@ -5,7 +5,7 @@ source("Model/server_model.R", local=TRUE);
 source("Fit/server_fit.R", local=TRUE);
 source("CodeGenerator/server_code_generator.R", local=TRUE);
 source("Help/server_help.R", local=TRUE);
-source("help_steps.R", local=TRUE);
+source("Help/help_steps.R", local=TRUE);
 
 shinyServer(function(input, output, session) {
   
@@ -19,7 +19,8 @@ shinyServer(function(input, output, session) {
   
   # update input_data when file uploaded
   input_data <- reactiveVal(NULL);
-  observeEvent(input$data_input_file, input_data(read_input_file(input)));
+  observeEvent(input$data_input_file, 
+               input_data(read_input_file(input, session)));
   
   # show input_data
   output$input_table <- renderDataTable(input_data());
@@ -113,7 +114,7 @@ shinyServer(function(input, output, session) {
   epochs_ran <- reactiveVal(0);
   observeEvent(input$fit, {
     model_history(list());
-    fit_data(prepare_fit_data(input_data(), input));
+    fit_data(prepare_fit_data(input_data(), input, session));
     # strange thing to have the plot being updated
     epochs_ran(0);
     observe({
